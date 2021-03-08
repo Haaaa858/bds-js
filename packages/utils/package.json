@@ -1,6 +1,6 @@
 {
   "name": "@bdsjs/utils",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A Common Js Library",
   "main": "./lib/index.js",
   "module": "./es/index.js",
@@ -42,5 +42,8 @@
     "xlsx": "^0.16.9"
   },
   "author": "Liu Baochang",
-  "email": "baochang_liu@sina.com"
+  "email": "baochang_liu@sina.com",
+  "devDependencies": {
+    "lodash.groupby": "^4.6.0"
+  }
 }
