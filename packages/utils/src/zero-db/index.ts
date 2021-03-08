@@ -118,27 +118,31 @@ function generateDeepObjectExpress(options: GenerateOptions): DeepObjectExpress 
     }
   }
   queryMap.fields.forEach((key) => {
-    const { queryType, fields, fieldSeparator } = dict[key];
-    let fieldValue = conditions[key];
+    const { queryType, fields, fieldSeparator = 'and' } = dict[key];
+    const fieldValue = conditions[key];
     // 递归复合参数
     if (isObject(fieldValue) && !isArray(fieldValue)) {
       queryMap.values[key] = generateDeepObjectExpress({
         conditions: conditions[key],
         dict,
-        fieldSeparator: fieldSeparator,
+        fieldSeparator,
       });
     } else if (fields.length > 1) {
       // 同一筛选项匹配多个字段
       queryMap.values[key] = {
         fields,
-        fieldSeparator: fieldSeparator,
+        fieldSeparator,
         values: fields.reduce((memo, field) => {
           set(memo, `${field}.${queryType}`, conditions[key]);
+          set(memo, `${field}.field`, field);
           return memo;
         }, {}),
       };
     } else {
       set(queryMap.values, `${key}.${queryType}`, parseFieldValue(queryType, fieldValue));
+      set(queryMap.values, `${key}.${queryType}`, parseFieldValue(queryType, fieldValue));
+      // 缓存下当前检索的字段
+      set(queryMap.values, `${key}.field`, fields[0]);
     }
   });
   return queryMap;

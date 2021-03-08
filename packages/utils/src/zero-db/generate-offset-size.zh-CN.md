@@ -16,7 +16,7 @@ group:
 ## 代码演示
 
 ```javascript
-import { generateOffsetSize  } from '@bdsjs/utils'
+import { generateOffsetSize } from '@bdsjs/utils'
 
 const pageNum = 1;
 const pageSize = 100;

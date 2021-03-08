@@ -1,7 +1,7 @@
 /** ZeroField Dict*/
 export interface ZeroField {
   queryType?: 'in' | 'is' | 'like' | 'noLike' | 'not';
-  fieldSeparator?: 'or' | 'and';
+  fieldSeparator?: 'or' | 'and' | undefined;
   fields: Array<string>;
 }
 

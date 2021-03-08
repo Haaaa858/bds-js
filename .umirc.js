@@ -30,6 +30,7 @@ export default {
   dynamicImport: {},
   manifest: {},
   hash: true,
+  base:"/",
   resolve: {
     includes: ['docs', 'packages/utils'],
   },
