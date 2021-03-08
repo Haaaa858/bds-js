@@ -31,7 +31,7 @@ npm 安装:
 npm install  @bdsjs/utils  -S  --registry=http://192.168.2.231:14873
 
 # 全局修改镜像地址， 以后安装所有包都会走一下 镜像地址
-npm config set registry http://registry.npm.taobao.org
+npm config set registry http://192.168.2.231:14873
 npm install  @bdsjs/utils  -S
 ```
 
