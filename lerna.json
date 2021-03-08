@@ -1,0 +1,14 @@
+{
+  "packages": ["packages/*"],
+  "command": {
+    "version": {
+      "allowBranch": "master",
+      "includeMergedTags": true
+    },
+    "publish": {
+      "registry": "http://192.168.2.231:14873"
+    }
+  },
+  "version": "independent",
+  "lerna": "2.11.0"
+}

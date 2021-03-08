@@ -1,0 +1,9 @@
+export const OR_CHAR = '||';
+export const AND_CHAR = '&&';
+export const LIKE = 'like';
+export const NO_LIKE = 'noLike';
+export const IS = 'is';
+export const NOT = 'not';
+export const IN = 'in';
+export const AND = 'and';
+export const OR = 'or';
