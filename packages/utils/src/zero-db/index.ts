@@ -77,6 +77,11 @@ function parseFieldValue(queryType, value): string | number | Array<any> {
   }
 }
 
+/** valid value */
+function validValue(value) {
+  return (isNumber(value) || (isArray(value) && value.length > 0) || (!isArray(value) && !!value));
+}
+
 /** 基于 DeepObjectExpress => } */
 function generateLogic(queryMap: DeepObjectExpress, queryLength = 0): ZeroLogicQuery {
   const { fieldSeparator = AND, fields, values } = queryMap;
@@ -93,9 +98,13 @@ function generateLogic(queryMap: DeepObjectExpress, queryLength = 0): ZeroLogicQ
         values[field],
         query.length + queryLength,
       );
-      query = query.concat(childQuery);
-      logicArr.push(`(${childLogic})`);
-    } else {
+      if (childQuery.length > 0) {
+        // 空值处理
+        query = query.concat(childQuery);
+        logicArr.push(`(${childLogic})`);
+      }
+    } else if (values[field]) {
+      // 空值处理
       logicArr.push(query.length + queryLength);
       query.push({ field, ...values[field] });
     }
@@ -104,11 +113,16 @@ function generateLogic(queryMap: DeepObjectExpress, queryLength = 0): ZeroLogicQ
 }
 
 /** 基于 检索条件 生成 对象逻辑表达式 */
-function generateDeepObjectExpress(options: GenerateOptions): DeepObjectExpress {
+function generateDeepObjectExpress(
+  options: GenerateOptions,
+  parentKey?: string | number,
+): DeepObjectExpress {
   const { conditions, dict, fieldSeparator = AND } = options;
   const queryMap = {
     fieldSeparator,
-    fields: Object.keys(conditions).filter((key) => !!dict[key]),
+    fields: parentKey
+      ? dict[parentKey].fields
+      : Object.keys(conditions).filter((key) => !!dict[key]),
     values: {},
   };
   if (process.env.NODE_ENV !== 'production') {
@@ -122,23 +136,29 @@ function generateDeepObjectExpress(options: GenerateOptions): DeepObjectExpress 
     const fieldValue = conditions[key];
     // 递归复合参数
     if (isObject(fieldValue) && !isArray(fieldValue)) {
-      queryMap.values[key] = generateDeepObjectExpress({
-        conditions: conditions[key],
-        dict,
-        fieldSeparator,
-      });
+      queryMap.values[key] = generateDeepObjectExpress(
+        {
+          conditions: conditions[key],
+          dict,
+          fieldSeparator,
+        },
+        key,
+      );
     } else if (fields.length > 1) {
       // 同一筛选项匹配多个字段
       queryMap.values[key] = {
         fields,
         fieldSeparator,
         values: fields.reduce((memo, field) => {
-          set(memo, `${field}.${queryType}`, conditions[key]);
-          set(memo, `${field}.field`, field);
+          // 假值处理
+          if(validValue(conditions[key])){
+            set(memo, `${field}.${queryType}`, conditions[key]);
+            set(memo, `${field}.field`, field);
+          }
           return memo;
         }, {}),
       };
-    } else {
+    } else if (validValue(fieldValue)) {
       set(queryMap.values, `${key}.${queryType}`, parseFieldValue(queryType, fieldValue));
       set(queryMap.values, `${key}.${queryType}`, parseFieldValue(queryType, fieldValue));
       // 缓存下当前检索的字段

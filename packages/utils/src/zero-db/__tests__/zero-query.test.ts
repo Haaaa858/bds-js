@@ -40,6 +40,7 @@ describe('zero-db generateZeroLogicQuery', function () {
       fields: ['rmtClient', 'client'],
     },
   };
+
   it('base', function () {
     const conditions = {
       uName: '融媒体1,融媒体2',
@@ -76,10 +77,30 @@ describe('zero-db generateZeroLogicQuery', function () {
         conditions: {
           xwmtClient: {
             rmtClient: {
-              client: '1',
+              client: "1",
               uName: '融媒体1,融媒体2',
             },
             client: '2,3,4',
+          },
+        },
+        dict: DICT,
+      }),
+    ).toEqual(expectResult);
+  });
+  it('test not value', function () {
+    const expectResult = {
+      logic: '',
+      query: [
+      ],
+    };
+    expect(
+      generateZeroLogicQuery({
+        conditions: {
+          keyword: "",
+          client: null,
+          accountId: undefined,
+          rmtClient: {
+            client: null,
           },
         },
         dict: DICT,
